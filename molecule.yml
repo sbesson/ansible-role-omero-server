@@ -54,6 +54,8 @@ ansible:
   group_vars:
     docker-hosts:
       omero_server_systemd_require_network: False
+  raw_env_vars:
+      USER_AGENT: "molecule"
 
 verifier:
   name: testinfra
