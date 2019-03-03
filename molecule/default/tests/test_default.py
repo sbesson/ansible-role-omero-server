@@ -1,22 +1,23 @@
-import testinfra.utils.ansible_runner
+import os
 import pytest
+import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    '.molecule/ansible_inventory').get_hosts('all')
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 OMERO = '/opt/omero/server/OMERO.server/bin/omero'
 OMERO_LOGIN = '-C -s localhost -u root -w omero'
 
 
-def test_service_running_and_enabled(Service):
-    service = Service('omero-server')
+def test_service_running_and_enabled(host):
+    service = host.service('omero-server')
     assert service.is_running
     assert service.is_enabled
 
 
-def test_omero_root_login(Command, Sudo):
-    with Sudo('data-importer'):
-        Command.check_output('%s login %s' % (OMERO, OMERO_LOGIN))
+def test_omero_root_login(host):
+    with host.sudo('data-importer'):
+        host.check_output('%s login %s' % (OMERO, OMERO_LOGIN))
 
 
 @pytest.mark.parametrize("key,value", [
@@ -25,15 +26,15 @@ def test_omero_root_login(Command, Sudo):
      '["screen", "plate", "project", "dataset"]'),
     ('omero.policy.binary_access', '-read,-write,-image,-plate'),
 ])
-def test_omero_server_config(Command, Sudo, key, value):
-    with Sudo('omero-server'):
-        cfg = Command.check_output("%s config get %s", OMERO, key)
+def test_omero_server_config(host, key, value):
+    with host.sudo('omero-server'):
+        cfg = host.check_output("%s config get %s", OMERO, key)
     assert cfg == value
 
 
-def test_inplace_import(Command, File, Sudo):
-    with Sudo('data-importer'):
-        outimport = Command.check_output(
+def test_inplace_import(host):
+    with host.sudo('data-importer'):
+        outimport = host.check_output(
             '%s %s import -- --transfer=ln_s /data/import/test.fake' %
             (OMERO, OMERO_LOGIN))
 
@@ -50,25 +51,25 @@ def test_inplace_import(Command, File, Sudo):
              'JOIN fse.originalFile AS ofile '
              'JOIN fileset.images AS image '
              'WHERE image.id = %d' % imageid)
-    with Sudo('data-importer'):
-        outhql = Command.check_output(
+    with host.sudo('data-importer'):
+        outhql = host.check_output(
             '%s %s hql -q --style plain "%s"' % (OMERO, OMERO_LOGIN, query))
 
-    f = File('/OMERO/ManagedRepository/%s' % outhql.split(',', 1)[1])
+    f = host.file('/OMERO/ManagedRepository/%s' % outhql.split(',', 1)[1])
     assert f.is_symlink
     assert f.linked_to == '/data/import/test.fake'
 
 
-def test_omero_datadir(File):
-    d = File('/OMERO')
+def test_omero_datadir(host):
+    d = host.file('/OMERO')
     assert d.is_directory
     assert d.user == 'omero-server'
     assert d.group == 'root'
     assert d.mode == 0o755
 
 
-def test_omero_managedrepo(File):
-    d = File('/OMERO/ManagedRepository')
+def test_omero_managedrepo(host):
+    d = host.file('/OMERO/ManagedRepository')
     assert d.is_directory
     assert d.user == 'omero-server'
     assert d.group == 'importer'

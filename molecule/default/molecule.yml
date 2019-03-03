@@ -1,0 +1,43 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: omero-server-olddep
+    image: centos/systemd
+    image_version: latest
+    privileged: True
+    ansible_groups:
+      - docker-hosts
+  - name: omero-server-newdep
+    image: centos/systemd
+    image_version: latest
+    privileged: True
+    ansible_groups:
+      - docker-hosts
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  inventory:
+    host_vars:
+      omero-server-olddep:
+        omero_server_ice_version: "3.5"
+        omero_server_release: present
+        postgresql_version: "9.4"
+      omero-server-newdep:
+        omero_server_ice_version: "3.6"
+        omero_server_release: latest
+        postgresql_version: "9.6"
+    group_vars:
+      docker-hosts:
+        omero_server_systemd_require_network: False
+scenario:
+  name: default
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

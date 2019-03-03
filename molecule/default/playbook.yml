@@ -1,6 +1,7 @@
 ---
 # Install 5.2 on both omero-server-olddep and omero-server-newdep
-- hosts: all
+- name: Install
+  hosts: all
 
   pre_tasks:
     # To test the upgrade process without breaking the idempotence check
@@ -51,7 +52,8 @@
 # omero_server_release is defined in molecule.yml host_vars so:
 # - omero-server-newdep: latest: upgraded
 # - omero-server-olddep: present: unchanged at 5.2
-- hosts: all
+- name: Upgrade
+  hosts: all
   roles:
 
     - role: ansible-role-omero-server
