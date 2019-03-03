@@ -9,12 +9,14 @@ platforms:
   - name: omero-server-olddep
     image: centos/systemd
     image_version: latest
+    command: /sbin/init
     privileged: True
     ansible_groups:
       - docker-hosts
   - name: omero-server-newdep
     image: centos/systemd
     image_version: latest
+    command: /sbin/init
     privileged: True
     ansible_groups:
       - docker-hosts
