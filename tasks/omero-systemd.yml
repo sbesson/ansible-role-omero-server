@@ -8,8 +8,8 @@
     force: yes
     src: systemd-system-omero-server-service.j2
   notify:
-  - reload systemd
-  - omero-server restart omero-server
+    - reload systemd
+    - omero-server restart omero-server
 
 # Flush handlers to ensure systemd is reloaded
 - name: omero server | flush systemd handlers

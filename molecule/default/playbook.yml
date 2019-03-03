@@ -45,7 +45,7 @@
           config set omero.policy.binary_access -- "-read,-write,-image,-plate"
         dest: /opt/omero/server/config/molecule-additional-config.omero
       notify:
-      - restart omero-server
+        - restart omero-server
 
 
 # Attempt to upgrade
@@ -71,29 +71,29 @@
 - hosts: all
   tasks:
 
-  - name: create import user
-    user:
-      name: data-importer
-      group: importer
+    - name: create import user
+      user:
+        name: data-importer
+        group: importer
 
-  - name: create data directory
-    file:
-      path: /data/import
-      state: directory
+    - name: create data directory
+      file:
+        path: /data/import
+        state: directory
 
-  - name: create fake image
-    copy:
-      content: ''
-      dest: /data/import/test.fake
+    - name: create fake image
+      copy:
+        content: ''
+        dest: /data/import/test.fake
 
 # testinfra Sudo doesn't use the `-i` flag, so the working directory needs
 # to be accessible
 - hosts: vagrant-hosts
   tasks:
-  - name: make vagrant home accessible
-    file:
-      owner: vagrant
-      group: vagrant
-      mode: "0711"
-      path: /home/vagrant
-      state: directory
+    - name: make vagrant home accessible
+      file:
+        owner: vagrant
+        group: vagrant
+        mode: "0711"
+        path: /home/vagrant
+        state: directory

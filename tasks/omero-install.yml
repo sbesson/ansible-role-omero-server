@@ -84,8 +84,8 @@
     chdir: "{{ omero_server_basedir }}"
     creates: "{{ omero_server_basedir }}/{{ omero_server_symlink }}"
   notify:
-  - omero-server rewrite omero-server configuration
-  - omero-server restart omero-server
+    - omero-server rewrite omero-server configuration
+    - omero-server restart omero-server
 
 # Backup database
 
@@ -123,5 +123,5 @@
     chdir: "{{ omero_server_basedir }}"
   when: _omero_server_execute_upgrade
   notify:
-  - omero-server rewrite omero-server configuration
-  - omero-server restart omero-server
+    - omero-server rewrite omero-server configuration
+    - omero-server restart omero-server

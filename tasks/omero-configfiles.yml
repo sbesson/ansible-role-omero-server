@@ -9,8 +9,8 @@
     src: omero-server-config-update-sh.j2
     mode: 0555
   notify:
-  - omero-server rewrite omero-server configuration
-  - omero-server restart omero-server
+    - omero-server rewrite omero-server configuration
+    - omero-server restart omero-server
 
 - name: omero server | configuration 00-omero-server.omero
   become: yes
@@ -19,5 +19,5 @@
     force: yes
     src: 00-omero-server-omero.j2
   notify:
-  - omero-server rewrite omero-server configuration
-  - omero-server restart omero-server
+    - omero-server rewrite omero-server configuration
+    - omero-server restart omero-server

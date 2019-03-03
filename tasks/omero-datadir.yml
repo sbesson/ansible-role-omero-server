@@ -19,11 +19,11 @@
     recurse: "{{ omero_server_datadir_chown }}"
     state: directory
   with_items:
-  - Files
-  - Thumbnails
-  - DropBox
-  - FullText
-  - Pixels
+    - Files
+    - Thumbnails
+    - DropBox
+    - FullText
+    - Pixels
 
 - name: omero server | create omero BioFormatsCache
   become: yes
